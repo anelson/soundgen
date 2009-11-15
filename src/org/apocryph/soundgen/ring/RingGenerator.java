@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apocryph.soundgen.sound.SoundGenerator;
-import org.apocryph.soundgen.sound.SoundSource;
 
 public class RingGenerator {
 	List<RingComponent> components = new LinkedList<RingComponent>();

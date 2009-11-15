@@ -9,6 +9,9 @@ import javax.sound.sampled.*;
 import org.apocryph.soundgen.ring.Chirp;
 import org.apocryph.soundgen.ring.ChirpComponent;
 import org.apocryph.soundgen.ring.ChirpRingComponent;
+import org.apocryph.soundgen.ring.Note;
+import org.apocryph.soundgen.ring.NoteChirper;
+import org.apocryph.soundgen.ring.Pitch;
 import org.apocryph.soundgen.ring.RingComponent;
 import org.apocryph.soundgen.ring.RingGenerator;
 import org.apocryph.soundgen.ring.SilenceRingComponent;
@@ -48,21 +51,17 @@ public class Program {
 	
 	static int FIRST_RING_CHIRP_SOUND_DURATION_MS = 25;
 	static int FIRST_RING_CHIRP_SILENCE_DURATION_MS = 28;
-	static int FIRST_RING_FREQ_1 = 690;
-	static int FIRST_RING_FREQ_2 = 2076;
+	static Pitch FIRST_RING_PITCH = new Pitch(Note.F, 5);
 	static double FIRST_RING_HARMONIC_VOLUME = 0.45;
 
 	static int SECOND_RING_CHIRP_SOUND_DURATION_MS = 25;
 	static int SECOND_RING_CHIRP_SILENCE_DURATION_MS = 28;
-	static int SECOND_RING_FREQ_1 = 983;
-	static int SECOND_RING_FREQ_2 = 2953;
+	static Pitch SECOND_RING_PITCH = new Pitch(Note.B, 5);
 	static double SECOND_RING_HARMONIC_VOLUME = 0.2;
 
 	static int THIRD_RING_CHIRP_SOUND_DURATION_MS = 29;
 	static int THIRD_RING_CHIRP_SILENCE_DURATION_MS = 25;
-	static int THIRD_RING_FREQ_1 = 495;
-	static int THIRD_RING_FREQ_2 = 1477;
-	static int THIRD_RING_FREQ_3 = 2461;
+	static Pitch THIRD_RING_PITCH = new Pitch(Note.B, 4);
 	static double THIRD_RING_HARMONIC_VOLUME = 0.2;	
 	
 	
@@ -94,11 +93,12 @@ public class Program {
 	}
 	
 	private static void generateFirstRingChirps(RingGenerator generator) {
-		Chirp chirp = new Chirp(2,
+		Chirp chirp = NoteChirper.createChirpForNote(2,
 				FIRST_RING_CHIRP_SOUND_DURATION_MS,
-				FIRST_RING_CHIRP_SILENCE_DURATION_MS);
-		chirp.addComponent(new ChirpComponent(FIRST_RING_FREQ_1, VOLUME));
-		chirp.addComponent(new ChirpComponent(FIRST_RING_FREQ_1*3, FIRST_RING_HARMONIC_VOLUME));
+				FIRST_RING_CHIRP_SILENCE_DURATION_MS,
+				FIRST_RING_PITCH,
+				VOLUME,
+				FIRST_RING_HARMONIC_VOLUME);
 		
 		generator.addRingComponent(new ChirpRingComponent(chirp));
 		generator.addRingComponent(generateSilence(140));
@@ -106,22 +106,24 @@ public class Program {
 	}
 	
 	private static void generateSecondRingChirps(RingGenerator generator) {
-		Chirp chirp = new Chirp(4,
+		Chirp chirp = NoteChirper.createChirpForNote(4,
 				SECOND_RING_CHIRP_SOUND_DURATION_MS,
-				SECOND_RING_CHIRP_SILENCE_DURATION_MS);
-		chirp.addComponent(new ChirpComponent(SECOND_RING_FREQ_1, VOLUME));
-		chirp.addComponent(new ChirpComponent(SECOND_RING_FREQ_1*3, SECOND_RING_HARMONIC_VOLUME));
+				SECOND_RING_CHIRP_SILENCE_DURATION_MS,
+				SECOND_RING_PITCH,
+				VOLUME,
+				SECOND_RING_HARMONIC_VOLUME);
 		
 		generator.addRingComponent(new ChirpRingComponent(chirp));
 	}
 	
 	private static void generateThirdRingChirps(RingGenerator generator) {
-		Chirp chirp = new Chirp(8,
+		Chirp chirp = NoteChirper.createChirpForNote(8,
 				THIRD_RING_CHIRP_SOUND_DURATION_MS,
-				THIRD_RING_CHIRP_SILENCE_DURATION_MS);
-		chirp.addComponent(new ChirpComponent(THIRD_RING_FREQ_1, VOLUME));
-		chirp.addComponent(new ChirpComponent(THIRD_RING_FREQ_1*3, THIRD_RING_HARMONIC_VOLUME));
-		chirp.addComponent(new ChirpComponent(THIRD_RING_FREQ_1*5, THIRD_RING_HARMONIC_VOLUME));
+				THIRD_RING_CHIRP_SILENCE_DURATION_MS,
+				THIRD_RING_PITCH,
+				VOLUME,
+				THIRD_RING_HARMONIC_VOLUME,
+				THIRD_RING_HARMONIC_VOLUME);
 		
 		generator.addRingComponent(new ChirpRingComponent(chirp));
 	}
