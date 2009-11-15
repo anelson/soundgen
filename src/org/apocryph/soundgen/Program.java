@@ -30,102 +30,141 @@ public class Program {
 	 */
 	public static void main(String[] args) throws Exception {
 		System.out.println("Playing sound\n");
-		//generateTone(690, 1000, 100, true);
 		generate();
 		System.out.println("Working\n");
 	}
 	
 	public static void generate() throws LineUnavailableException,IOException {
+		/*generateRing(
+				FIRST_RING_PITCH,
+				SECOND_RING_PITCH,
+				THIRD_RING_PITCH);
+		System.out.println("\n");*/
+		generateRandomRing();
+	}
+	
+	static Pitch FIRST_RING_PITCH = new Pitch(Note.F, 5);
+	static Pitch SECOND_RING_PITCH = new Pitch(Note.B, 5);
+	static Pitch THIRD_RING_PITCH = new Pitch(Note.B, 4);
+	
+	static int MIN_OCTAVE = 5;
+	static int MAX_OCTAVE = 7;
+
+	public static void generateRandomRing() throws LineUnavailableException,IOException {
+		Pitch pitchOne = Pitch.getRandomPitch(MIN_OCTAVE, MAX_OCTAVE);
+		Pitch pitchTwo = pitchOne.getRandomPitch(1);
+		Pitch pitchThree = pitchTwo.getRandomPitch(1);
+		
+		generateRing(pitchOne,
+				pitchTwo,
+				pitchThree);
+	}
+	
+	public static void generateRing(Pitch firstRing, 
+			Pitch secondRing,
+			Pitch thirdRing) throws LineUnavailableException,IOException {
+		
+		String fileName = "ring-" +
+			firstRing.getName() + "-" +
+			secondRing.getName() + "-" +
+			thirdRing.getName() + 
+			".wav";
+		
+		generateRing(fileName,
+				firstRing,
+				secondRing,
+				thirdRing);
+	}
+	
+	public static void generateRing(String fileName,
+			Pitch firstRing, 
+			Pitch secondRing,
+			Pitch thirdRing) throws LineUnavailableException,IOException {
 		SoundGenerator generator = new SoundGenerator();
-		generateRing(generator);
+		generateRing(generator,
+				firstRing,
+				secondRing,
+				thirdRing);
+		
+		System.out.println("Generating file " + fileName);
 		AudioDataLineSoundPort speakerPort = new AudioDataLineSoundPort(44100, 8);
 		speakerPort.startPlaying();
 		generator.generateSound(speakerPort);
 		speakerPort.finishPlaying();
 		
-		WaveFileSoundPort filePort = new WaveFileSoundPort("ring.wav", 44100, 8);
+		WaveFileSoundPort filePort = new WaveFileSoundPort(fileName, 44100, 8);
 		generator.generateSound(filePort);
 		filePort.writeFile();
+		System.out.println("Generated file " + fileName);
 	}
 	
-	static double VOLUME = 0.5;
-	
-	static int BEAT_DURATION_MS = 25;
-	static int ONE_BEAT = 1*BEAT_DURATION_MS;
-	static int TWO_BEATS = 2*BEAT_DURATION_MS;
-	static int THREE_BEATS = 3*BEAT_DURATION_MS;
-	static int FOUR_BEATS = 4*BEAT_DURATION_MS;
-	static int SIX_BEATS = 6*BEAT_DURATION_MS;
-	
-	static int FIRST_RING_CHIRP_SOUND_DURATION_MS = ONE_BEAT;
-	static int FIRST_RING_CHIRP_SILENCE_DURATION_MS = ONE_BEAT;
-	static Pitch FIRST_RING_PITCH = new Pitch(Note.F, 5);
-
-	static int SECOND_RING_CHIRP_SOUND_DURATION_MS = ONE_BEAT;
-	static int SECOND_RING_CHIRP_SILENCE_DURATION_MS = ONE_BEAT;
-	static Pitch SECOND_RING_PITCH = new Pitch(Note.B, 5);
-
-	static int THIRD_RING_CHIRP_SOUND_DURATION_MS = ONE_BEAT;
-	static int THIRD_RING_CHIRP_SILENCE_DURATION_MS = ONE_BEAT;
-	static Pitch THIRD_RING_PITCH = new Pitch(Note.B, 4);
-	
-	
 	public static void generateRing(SoundGenerator generator) {
+		generateRing(generator,
+				FIRST_RING_PITCH,
+				SECOND_RING_PITCH,
+				THIRD_RING_PITCH);
+	}
+	
+	public static void generateRing(SoundGenerator generator,
+			Pitch firstRing,
+			Pitch secondRing,
+			Pitch thirdRing) {
+		System.out.println("Generating ring with piches " +
+				firstRing.getName() +
+				"," + 
+				secondRing.getName() +
+				"," +
+				thirdRing.getName());
+				
+		
 		RingProgram program = new RingProgram();
+		
+		/**
+		 * CHIRP (3 beats)
+		 * 
+		 * SILENCE (3 beats)
+		 * SILENCE (3 beats)
+		 * 
+		 * CHIRP (3 beats)
+		 * 
+		 * SILENCE (3 beats)
+		 * SILENCE (3 beats)
+		 * SILENCE (3 beats)
+		 * SILENCE (3 beats)
+		 * SILENCE (3 beats)
+		 * 
+		 * CHIRP (3 beats)
+		 * CHIRP (3 beats)
+		 * 
+		 * CHIRP (3 beats)
+		 * CHIRP (3 beats)
+		 * CHIRP (3 beats)
+		 * CHIRP (3 beats)
+		 */
 		
 		//Into silence
 		program.addSilence(4);
 		
 		//Chirp-Chirp
-		program.addChirp(FIRST_RING_PITCH, 3);
+		program.addChirp(firstRing, 3);
 		program.addSilence(6);
-		program.addChirp(FIRST_RING_PITCH, 3);
+		program.addChirp(firstRing, 3);
 		
 		//Pause
 		program.addSilence(15);
 		
 		//High Chirp
-		program.addChirp(SECOND_RING_PITCH, 7);
+		program.addChirp(secondRing, 7);
 		
 		//Pause
 		program.addSilence(1);
 		
 		//Low chirp
-		program.addChirp(THIRD_RING_PITCH, 15);
+		program.addChirp(thirdRing, 15);
 		
 		//Final silence
 		program.addSilence(4);
 		
 		program.generateRing(generator);
 	}
-	
-	private static void generateFirstRingChirps(RingGenerator generator) {
-		generateChirps(generator, FIRST_RING_PITCH, 2);
-		generator.addRingComponent(generateSilence(SIX_BEATS));
-		generateChirps(generator, FIRST_RING_PITCH, 2);
-	}
-	
-	private static void generateSecondRingChirps(RingGenerator generator) {
-		generateChirps(generator, SECOND_RING_PITCH, 4);
-	}
-	
-	private static void generateThirdRingChirps(RingGenerator generator) {
-		generateChirps(generator, THIRD_RING_PITCH, 8);
-	}
-	
-	private static void generateChirps(RingGenerator generator, Pitch pitch, int numChirps) {
-		Chirp chirp = NoteChirper.createChirpForNote(numChirps,
-				ONE_BEAT,
-				ONE_BEAT,
-				pitch,
-				VOLUME,
-				VOLUME / 2,
-				VOLUME / 4);
-		
-		generator.addRingComponent(new ChirpRingComponent(chirp));
-		
-	}
-	private static RingComponent generateSilence(int durationMs) {
-		return new SilenceRingComponent(durationMs);
-	}	 
 }

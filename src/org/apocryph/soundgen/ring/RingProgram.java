@@ -24,7 +24,6 @@ public class RingProgram {
 	
 	public void addChirp(Pitch pitch, int numBeats) {
 		int numChirps = (numBeats + 1) / 2;
-		int numPauses = numBeats - numChirps;
 		
 		Chirp chirp = NoteChirper.createChirpForNote(numChirps,
 				ONE_BEAT,

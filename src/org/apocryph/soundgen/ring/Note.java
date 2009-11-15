@@ -22,6 +22,28 @@ public class Note {
 	public static Note Asharp = new Note("A#", 29.135);
 	public static Note B = new Note("B", 30.868);
 	
+	public static Note[] ALL_NOTES = new Note[] {
+		C,
+		Csharp,
+		D,
+		Dsharp,
+		E,
+		F,
+		Fsharp,
+		G,
+		Gsharp,
+		A,
+		Asharp,
+		B
+	};
+
+	public static int MIN_OCTAVE = 0;
+	public static int MAX_OCTAVE = 10;
+	
+	public String getName() {
+		return this.name;
+	}
+	
 	public double getFrequency(int octave) throws IllegalArgumentException  {
 		if (octave < 0) {
 			throw new IllegalArgumentException("octave");
