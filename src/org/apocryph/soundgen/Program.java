@@ -14,6 +14,7 @@ import org.apocryph.soundgen.ring.NoteChirper;
 import org.apocryph.soundgen.ring.Pitch;
 import org.apocryph.soundgen.ring.RingComponent;
 import org.apocryph.soundgen.ring.RingGenerator;
+import org.apocryph.soundgen.ring.RingProgram;
 import org.apocryph.soundgen.ring.SilenceRingComponent;
 import org.apocryph.soundgen.sound.AdditiveSoundSource;
 import org.apocryph.soundgen.sound.AudioDataLineSoundPort;
@@ -49,82 +50,80 @@ public class Program {
 	
 	static double VOLUME = 0.5;
 	
-	static int FIRST_RING_CHIRP_SOUND_DURATION_MS = 25;
-	static int FIRST_RING_CHIRP_SILENCE_DURATION_MS = 28;
+	static int BEAT_DURATION_MS = 25;
+	static int ONE_BEAT = 1*BEAT_DURATION_MS;
+	static int TWO_BEATS = 2*BEAT_DURATION_MS;
+	static int THREE_BEATS = 3*BEAT_DURATION_MS;
+	static int FOUR_BEATS = 4*BEAT_DURATION_MS;
+	static int SIX_BEATS = 6*BEAT_DURATION_MS;
+	
+	static int FIRST_RING_CHIRP_SOUND_DURATION_MS = ONE_BEAT;
+	static int FIRST_RING_CHIRP_SILENCE_DURATION_MS = ONE_BEAT;
 	static Pitch FIRST_RING_PITCH = new Pitch(Note.F, 5);
 
-	static int SECOND_RING_CHIRP_SOUND_DURATION_MS = 25;
-	static int SECOND_RING_CHIRP_SILENCE_DURATION_MS = 28;
+	static int SECOND_RING_CHIRP_SOUND_DURATION_MS = ONE_BEAT;
+	static int SECOND_RING_CHIRP_SILENCE_DURATION_MS = ONE_BEAT;
 	static Pitch SECOND_RING_PITCH = new Pitch(Note.B, 5);
 
-	static int THIRD_RING_CHIRP_SOUND_DURATION_MS = 25;
-	static int THIRD_RING_CHIRP_SILENCE_DURATION_MS = 28;
+	static int THIRD_RING_CHIRP_SOUND_DURATION_MS = ONE_BEAT;
+	static int THIRD_RING_CHIRP_SILENCE_DURATION_MS = ONE_BEAT;
 	static Pitch THIRD_RING_PITCH = new Pitch(Note.B, 4);
 	
 	
 	public static void generateRing(SoundGenerator generator) {
-		RingGenerator ringGen = new RingGenerator();
+		RingProgram program = new RingProgram();
 		
 		//Into silence
-		ringGen.addRingComponent(generateSilence(105));;
+		program.addSilence(4);
 		
 		//Chirp-Chirp
-		generateFirstRingChirps(ringGen);
+		program.addChirp(FIRST_RING_PITCH, 3);
+		program.addSilence(6);
+		program.addChirp(FIRST_RING_PITCH, 3);
 		
 		//Pause
-		ringGen.addRingComponent(generateSilence(367));
+		program.addSilence(15);
 		
 		//High Chirp
-		generateSecondRingChirps(ringGen);
+		program.addChirp(SECOND_RING_PITCH, 7);
 		
 		//Pause
-		ringGen.addRingComponent(generateSilence(25+3));
+		program.addSilence(1);
 		
 		//Low chirp
-		generateThirdRingChirps(ringGen);
+		program.addChirp(THIRD_RING_PITCH, 15);
 		
-		//Pause
-		ringGen.addRingComponent(generateSilence(100-25));
+		//Final silence
+		program.addSilence(4);
 		
-		ringGen.generate(generator);
+		program.generateRing(generator);
 	}
 	
 	private static void generateFirstRingChirps(RingGenerator generator) {
-		Chirp chirp = NoteChirper.createChirpForNote(2,
-				FIRST_RING_CHIRP_SOUND_DURATION_MS,
-				FIRST_RING_CHIRP_SILENCE_DURATION_MS,
-				FIRST_RING_PITCH,
-				VOLUME,
-				VOLUME / 2,
-				VOLUME / 4);
-		
-		generator.addRingComponent(new ChirpRingComponent(chirp));
-		generator.addRingComponent(generateSilence(140));
-		generator.addRingComponent(new ChirpRingComponent(chirp));
+		generateChirps(generator, FIRST_RING_PITCH, 2);
+		generator.addRingComponent(generateSilence(SIX_BEATS));
+		generateChirps(generator, FIRST_RING_PITCH, 2);
 	}
 	
 	private static void generateSecondRingChirps(RingGenerator generator) {
-		Chirp chirp = NoteChirper.createChirpForNote(4,
-				SECOND_RING_CHIRP_SOUND_DURATION_MS,
-				SECOND_RING_CHIRP_SILENCE_DURATION_MS,
-				SECOND_RING_PITCH,
-				VOLUME,
-				VOLUME / 2,
-				VOLUME / 4);
-		
-		generator.addRingComponent(new ChirpRingComponent(chirp));
+		generateChirps(generator, SECOND_RING_PITCH, 4);
 	}
 	
 	private static void generateThirdRingChirps(RingGenerator generator) {
-		Chirp chirp = NoteChirper.createChirpForNote(8,
-				THIRD_RING_CHIRP_SOUND_DURATION_MS,
-				THIRD_RING_CHIRP_SILENCE_DURATION_MS,
-				THIRD_RING_PITCH,
+		generateChirps(generator, THIRD_RING_PITCH, 8);
+	}
+	
+	private static void generateChirps(RingGenerator generator, Pitch pitch, int numChirps) {
+		Chirp chirp = NoteChirper.createChirpForNote(numChirps,
+				ONE_BEAT,
+				ONE_BEAT,
+				pitch,
 				VOLUME,
 				VOLUME / 2,
 				VOLUME / 4);
 		
 		generator.addRingComponent(new ChirpRingComponent(chirp));
+		
 	}
 	private static RingComponent generateSilence(int durationMs) {
 		return new SilenceRingComponent(durationMs);
