@@ -52,17 +52,14 @@ public class Program {
 	static int FIRST_RING_CHIRP_SOUND_DURATION_MS = 25;
 	static int FIRST_RING_CHIRP_SILENCE_DURATION_MS = 28;
 	static Pitch FIRST_RING_PITCH = new Pitch(Note.F, 5);
-	static double FIRST_RING_HARMONIC_VOLUME = 0.45;
 
 	static int SECOND_RING_CHIRP_SOUND_DURATION_MS = 25;
 	static int SECOND_RING_CHIRP_SILENCE_DURATION_MS = 28;
 	static Pitch SECOND_RING_PITCH = new Pitch(Note.B, 5);
-	static double SECOND_RING_HARMONIC_VOLUME = 0.2;
 
-	static int THIRD_RING_CHIRP_SOUND_DURATION_MS = 29;
-	static int THIRD_RING_CHIRP_SILENCE_DURATION_MS = 25;
+	static int THIRD_RING_CHIRP_SOUND_DURATION_MS = 25;
+	static int THIRD_RING_CHIRP_SILENCE_DURATION_MS = 28;
 	static Pitch THIRD_RING_PITCH = new Pitch(Note.B, 4);
-	static double THIRD_RING_HARMONIC_VOLUME = 0.2;	
 	
 	
 	public static void generateRing(SoundGenerator generator) {
@@ -98,7 +95,8 @@ public class Program {
 				FIRST_RING_CHIRP_SILENCE_DURATION_MS,
 				FIRST_RING_PITCH,
 				VOLUME,
-				FIRST_RING_HARMONIC_VOLUME);
+				VOLUME / 2,
+				VOLUME / 4);
 		
 		generator.addRingComponent(new ChirpRingComponent(chirp));
 		generator.addRingComponent(generateSilence(140));
@@ -111,7 +109,8 @@ public class Program {
 				SECOND_RING_CHIRP_SILENCE_DURATION_MS,
 				SECOND_RING_PITCH,
 				VOLUME,
-				SECOND_RING_HARMONIC_VOLUME);
+				VOLUME / 2,
+				VOLUME / 4);
 		
 		generator.addRingComponent(new ChirpRingComponent(chirp));
 	}
@@ -122,8 +121,8 @@ public class Program {
 				THIRD_RING_CHIRP_SILENCE_DURATION_MS,
 				THIRD_RING_PITCH,
 				VOLUME,
-				THIRD_RING_HARMONIC_VOLUME,
-				THIRD_RING_HARMONIC_VOLUME);
+				VOLUME / 2,
+				VOLUME / 4);
 		
 		generator.addRingComponent(new ChirpRingComponent(chirp));
 	}
