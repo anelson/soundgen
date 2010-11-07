@@ -3,6 +3,7 @@ package org.apocryph.soundgen;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.sound.sampled.*;
 
@@ -35,11 +36,13 @@ public class Program {
 	}
 	
 	public static void generate() throws LineUnavailableException,IOException {
-		/*generateRing(
+		/*
+		generateRing(
 				FIRST_RING_PITCH,
 				SECOND_RING_PITCH,
 				THIRD_RING_PITCH);
-		System.out.println("\n");*/
+		System.out.println("\n");
+		*/
 		generateRandomRing();
 	}
 	
@@ -51,6 +54,7 @@ public class Program {
 	static int MAX_OCTAVE = 7;
 
 	public static void generateRandomRing() throws LineUnavailableException,IOException {
+		/*
 		Pitch pitchOne = Pitch.getRandomPitch(MIN_OCTAVE, MAX_OCTAVE);
 		Pitch pitchTwo = pitchOne.getRandomPitch(1);
 		Pitch pitchThree = pitchTwo.getRandomPitch(1);
@@ -58,6 +62,23 @@ public class Program {
 		generateRing(pitchOne,
 				pitchTwo,
 				pitchThree);
+				*/
+		Random random = new Random(1);
+		
+		for (int idx = 0; idx < 20; idx++) {
+			RingProgram program = RingProgram.generateRandomProgram(16, random);
+			SoundGenerator soundGenerator = new SoundGenerator();
+			program.generateRing(soundGenerator);
+			
+			System.out.println("Generated random ring program " + idx + ": " +
+					program.getStringRepresentation());
+
+			generateRing(program.getStringRepresentation() + ".wav",
+					soundGenerator);
+		}
+		/*
+		generateRing("RandomRing.wav",
+				soundGenerator);*/
 	}
 	
 	public static void generateRing(Pitch firstRing, 
@@ -86,11 +107,19 @@ public class Program {
 				secondRing,
 				thirdRing);
 		
+		generateRing(fileName,
+				generator);
+	}
+	
+	public static void generateRing(String fileName,
+			SoundGenerator generator) throws LineUnavailableException,IOException {		
 		System.out.println("Generating file " + fileName);
+		
+		/*
 		AudioDataLineSoundPort speakerPort = new AudioDataLineSoundPort(44100, 8);
 		speakerPort.startPlaying();
 		generator.generateSound(speakerPort);
-		speakerPort.finishPlaying();
+		speakerPort.finishPlaying(); */
 		
 		WaveFileSoundPort filePort = new WaveFileSoundPort(fileName, 44100, 8);
 		generator.generateSound(filePort);
@@ -115,55 +144,28 @@ public class Program {
 				secondRing.getName() +
 				"," +
 				thirdRing.getName());
-				
 		
 		RingProgram program = new RingProgram();
 		
-		/**
-		 * CHIRP (3 beats)
-		 * 
-		 * SILENCE (3 beats)
-		 * SILENCE (3 beats)
-		 * 
-		 * CHIRP (3 beats)
-		 * 
-		 * SILENCE (3 beats)
-		 * SILENCE (3 beats)
-		 * SILENCE (3 beats)
-		 * SILENCE (3 beats)
-		 * SILENCE (3 beats)
-		 * 
-		 * CHIRP (3 beats)
-		 * CHIRP (3 beats)
-		 * 
-		 * CHIRP (3 beats)
-		 * CHIRP (3 beats)
-		 * CHIRP (3 beats)
-		 * CHIRP (3 beats)
-		 */
-		
-		//Into silence
-		program.addSilence(4);
-		
-		//Chirp-Chirp
-		program.addChirp(firstRing, 3);
-		program.addSilence(6);
-		program.addChirp(firstRing, 3);
-		
-		//Pause
-		program.addSilence(15);
-		
-		//High Chirp
-		program.addChirp(secondRing, 7);
-		
-		//Pause
+		//Intro silence
 		program.addSilence(1);
-		
+
+		//Chirp-Chirp
+		program.addChirp(firstRing, 1);
+		program.addSilence(2);
+		program.addChirp(firstRing, 1);
+
+		//Pause
+		program.addSilence(5);
+
+		//High Chirp
+		program.addChirp(secondRing, 2);
+
 		//Low chirp
-		program.addChirp(thirdRing, 15);
-		
+		program.addChirp(thirdRing, 4);
+
 		//Final silence
-		program.addSilence(4);
+		program.addSilence(1);
 		
 		program.generateRing(generator);
 	}
